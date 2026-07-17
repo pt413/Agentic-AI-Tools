@@ -81,41 +81,6 @@ Depending on the workflow, additional nodes may include:
 
 ---
 
-# Repository Structure
-
-```
-
-Agentic-AI-Tools/
-
-├── rag/
-│ ├── basic-rag/
-│ ├── hybrid-rag/
-│ └── ...
-│
-├── langgraph/
-│ ├── planner/
-│ ├── state-management/
-│ ├── conditional-routing/
-│ └── ...
-│
-├── orchestrators/
-│ ├── planner/
-│ ├── preflight/
-│ ├── synthesizer/
-│ └── ...
-│
-├── examples/
-│
-├── docs/
-│
-├── assets/
-│
-└── README.md
-
-```
-
----
-
 # Features
 
 ✅ Retrieval-Augmented Generation (RAG)
@@ -150,6 +115,10 @@ Question
 
 ↓
 
+Preflight Validation
+
+↓
+
 Planner
 
 ↓
@@ -162,7 +131,7 @@ Yes
 
 ↓
 
-Preflight Validation
+Which Tools?
 
 ↓
 
@@ -190,14 +159,18 @@ Final Answer
 
 # Technologies Used
 
-- Python
+- FastApi
 - LangGraph
-- LangChain
-- OpenAI
-- FAISS / Pinecone / Chroma
-- FastAPI
+- OpenAI / Ollama
+- pgvector / Pinecone / Chroma
+- AI Agents
 - Pydantic
-- PostgreSQL (where applicable)
+- PostgreSQL / Neon DB
+- Retrieval Augmented Generation
+- LLM Orchestration
+- Vector RAG / Graph RAG
+- Hybrid Search / Vector Search
+- Code Reranker
 
 ---
 
@@ -224,7 +197,7 @@ This better reflects how production AI systems are designed.
 
 | Workflow | Status |
 |-----------|--------|
-| Basic RAG | ✅ |
+| Advanced RAG | ✅ |
 | LangGraph Planner | ✅ |
 | Preflight Validation | ✅ |
 | LLM Router | ✅ |

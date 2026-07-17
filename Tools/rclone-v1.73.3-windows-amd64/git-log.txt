@@ -1,0 +1,128 @@
+commit 0f6401e57e307f4b3aea6ad9e517ae7f60674f78
+Author: Nick Craig-Wood <nick@craig-wood.com>
+Date:   Mon Mar 23 17:16:56 2026 +0000
+
+    Version v1.73.3
+
+commit 543ac7c50c95218b5fe99f054aea268d088295cd
+Author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Date:   Fri Mar 20 22:19:00 2026 +0000
+
+    build(deps): bump github.com/buger/jsonparser from 1.1.1 to 1.1.2
+    
+    Bumps [github.com/buger/jsonparser](https://github.com/buger/jsonparser) from 1.1.1 to 1.1.2.
+    - [Release notes](https://github.com/buger/jsonparser/releases)
+    - [Commits](https://github.com/buger/jsonparser/compare/v1.1.1...v1.1.2)
+    
+    ---
+    updated-dependencies:
+    - dependency-name: github.com/buger/jsonparser
+      dependency-version: 1.1.2
+      dependency-type: indirect
+    ...
+    
+    Signed-off-by: dependabot[bot] <support@github.com>
+
+commit 61b4897c333f625206fa2c4a3d56d3cd84f9a14b
+Author: albertony <12441419+albertony@users.noreply.github.com>
+Date:   Fri Mar 20 21:18:07 2026 +0100
+
+    docs/jottacloud: fix broken link
+
+commit 504042f6aa48e6c84356eed756b6b5b5da77bf95
+Author: Jason <jasonbabo@gmail.com>
+Date:   Fri Mar 20 13:51:27 2026 +0000
+
+    docs: clarify Filen password change requires updating both password and API key in rclone config
+
+commit 68996b44293ce5f93b80c4544a60782864eefaa3
+Author: Jason <jasonbabo@gmail.com>
+Date:   Fri Mar 20 11:06:24 2026 +0000
+
+    docs: note that Filen API key changes on password change
+
+commit 83025eaef2852832f56c7a6bc753c414cd17ad8c
+Author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Date:   Thu Mar 19 02:20:16 2026 +0000
+
+    build(deps): bump google.golang.org/grpc from 1.79.1 to 1.79.3
+    
+    Bumps [google.golang.org/grpc](https://github.com/grpc/grpc-go) from 1.79.1 to 1.79.3.
+    - [Release notes](https://github.com/grpc/grpc-go/releases)
+    - [Commits](https://github.com/grpc/grpc-go/compare/v1.79.1...v1.79.3)
+    
+    ---
+    updated-dependencies:
+    - dependency-name: google.golang.org/grpc
+      dependency-version: 1.79.3
+      dependency-type: indirect
+    ...
+    
+    Signed-off-by: dependabot[bot] <support@github.com>
+
+commit 634e93e339a6fd094cd94be492c6d19a77d8de6d
+Author: Marco Ferretti <mferretti93@gmail.com>
+Date:   Sat Mar 14 22:15:47 2026 +0000
+
+    s3: add multi tenant support for Cubbit
+
+commit f9bf6d823e2a90a12766232fac2069216ead15cd
+Author: Andrew Furman <7343697+furmandev@users.noreply.github.com>
+Date:   Thu Mar 12 14:58:22 2026 -0700
+
+    lib/rest: fix URLPathEscapeAll breaking WebDAV servers (eg nzbdav) with strict path matching
+    
+    URLPathEscapeAll was only passing [A-Za-z0-9/] through unencoded, causing
+    it to percent-encode RFC 3986 unreserved characters (-, ., _, ~). Per RFC
+    3986 §2.3, unreserved characters MUST NOT be percent-encoded, and a URI
+    that unnecessarily encodes them is not equivalent to one that does not.
+    
+    Servers that perform strict path matching without normalising
+    percent-encoded characters will reject the over-encoded form with a 404.
+    
+    Before: /files/my-report.pdf → /files/my%2Dreport%2Epdf
+    After:  /files/my-report.pdf → /files/my-report.pdf
+    
+    Reserved characters (spaces, semicolons, colons, etc.) continue to be
+    encoded as before.
+
+commit 14defb23dc3652ec14cc89de69a8ec3d709e3919
+Author: Nick Craig-Wood <nick@craig-wood.com>
+Date:   Mon Mar 9 12:03:44 2026 +0000
+
+    list: fix nil pointer panic in Sorter when temp file creation fails
+    
+    When extsort.Strings() cannot create temporary files (e.g. due to
+    apparmor restrictions or permission denied), it returns a nil sorter
+    with the error on errChan. The code then called Sort() on the nil
+    sorter, causing a panic.
+    
+    Check for nil sorter and return the error instead of panicking.
+    
+    Fixes #9244
+
+commit 00b47c99a575a5aa0bb1e4187ee7653e024ea9c4
+Author: Nick Craig-Wood <nick@craig-wood.com>
+Date:   Tue Mar 10 09:49:05 2026 +0000
+
+    docs: update RELEASE procedure to avoid mistakes
+
+commit c7f4adb970d469f7601220cf5e389e0b2caa7cf0
+Author: Jan-Philipp Reßler <75355263+TabError@users.noreply.github.com>
+Date:   Mon Mar 9 19:35:20 2026 +0100
+
+    docs: added text to the label showing version-introduced info
+    
+    Co-authored-by: Jan-Philipp Reßler <xodarap@xodarap.de>
+
+commit 9468ac3129d29ae4bd499d0d30f0674b06d1c01c
+Author: Nick Craig-Wood <nick@craig-wood.com>
+Date:   Mon Mar 23 16:56:58 2026 +0000
+
+    Start v1.73.3-DEV development
+
+commit 9fce660b4b0cc1b3944eb1a7ce556442246fd96b
+Author: Nick Craig-Wood <nick@craig-wood.com>
+Date:   Mon Feb 23 13:01:33 2026 +0000
+
+    docs: update sponsors

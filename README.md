@@ -214,9 +214,9 @@ This better reflects how production AI systems are designed.
 Clone the repository
 
 ```bash
-git clone https://github.com/<username>/Agentic-AI-Tools.git
+git clone https://github.com/pt413/Agentic-AI-Tools.git
 
-cd Agentic-AI-Tools
+cd Tools
 ```
 
 Install dependencies

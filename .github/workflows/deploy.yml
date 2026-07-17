@@ -1,0 +1,42 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GHCR_PAT }}
+
+      - name: Build and push backend
+        run: |
+          docker build -f docker/DockerFile.backend -t ghcr.io/rmsai25/bp_ai/backend:latest .
+          docker push ghcr.io/rmsai25/bp_ai/backend:latest
+
+      - name: Build and push frontend
+        run: |
+          docker build -f docker/DockerFile.frontend -t ghcr.io/rmsai25/bp_ai/frontend:latest .
+          docker push ghcr.io/rmsai25/bp_ai/frontend:latest
+
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: 13.203.219.180
+          username: ec2-user
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd ~/BP_AI/docker
+            docker-compose -f docker-compose.prod.yml pull
+            docker-compose -f docker-compose.prod.yml up -d

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Drive OAuth Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-100 min-h-screen flex items-center justify-center">
+    <div class="bg-white p-6 rounded shadow w-96 space-y-4">
+      <h1 class="text-xl font-bold text-center">Google Drive Ingest</h1>
+
+      <button
+        id="connectBtn"
+        class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+      >
+        Connect Google Drive
+      </button>
+
+      <input
+        id="driveLink"
+        placeholder="Paste Drive file / folder link"
+        class="w-full border p-2 rounded"
+      />
+
+      <input
+        id="email"
+        placeholder="Your email (for now)"
+        class="w-full border p-2 rounded"
+      />
+
+      <button
+        id="ingestBtn"
+        class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700"
+      >
+        Ingest
+      </button>
+
+      <p id="status" class="text-sm text-center text-gray-600"></p>
+    </div>
+
+    <script>
+      const API_BASE = "http://127.0.0.1:8000";
+
+      document.getElementById("connectBtn").onclick = async () => {
+        const res = await fetch(`${API_BASE}/files/oauth/start`, {
+          credentials: "include",
+        });
+        const data = await res.json();
+        window.location.href = data.oauth_url;
+      };
+
+      document.getElementById("ingestBtn").onclick = async () => {
+        const driveLink = document.getElementById("driveLink").value;
+        const email = document.getElementById("email").value;
+        const status = document.getElementById("status");
+
+        status.innerText = "Ingesting...";
+
+        const res = await fetch(`${API_BASE}/files/ingest/public-drive`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({
+            drive_link: driveLink,
+            user_email: email,
+          }),
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          status.innerText = data.error || "Failed";
+        } else {
+          status.innerText = "Ingestion completed";
+        }
+      };
+    </script>
+  </body>
+</html>

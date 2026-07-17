@@ -1,0 +1,197 @@
+services:
+  # ======================
+  # FastAPI Backend (GPU)
+  # ======================
+  connector:
+    build:
+      context: ../FastApi
+      dockerfile: ../docker/DockerFile.backend
+    container_name: connector
+    restart: unless-stopped
+    ports:
+      - "8001:8000"
+
+    env_file:
+      - ./.env
+
+    environment:
+      USE_GPU: "true"
+      NVIDIA_VISIBLE_DEVICES: all
+      NVIDIA_DRIVER_CAPABILITIES: compute,utility
+      PYTORCH_CUDA_ALLOC_CONF: "max_split_size_mb:512"
+      
+      #PADDLE_DEVICE: gpu
+      #FLAGS_use_cuda: "1"
+      CUDA_VISIBLE_DEVICES: "0"
+      PADDLEX_FRAMEWORK: torch
+      
+      FLAGS_enable_eager_mode: "1"
+      FLAGS_use_cuda: "1"
+      
+      #PADDLEX_DEVICE: gpu
+      #PADDLEX_ENABLE_CUDA: "1"
+
+    gpus: all
+
+    command: >
+      uvicorn app.main:app
+      --host 0.0.0.0
+      --port 8000
+
+    depends_on:
+      - postgres
+      - redis
+
+    networks:
+      - bpai_shared_net
+ 
+  # ======================
+  # Celery Worker (CPU ONLY)
+  # ======================
+  celery-worker:
+    build:
+      context: ../FastApi
+      dockerfile: ../docker/DockerFile.backend
+    container_name: celery-worker
+    restart: unless-stopped
+    command: celery -A app.celery worker --loglevel=info
+    env_file:
+      - ./.env
+    depends_on:
+      - redis
+      - postgres
+      - connector
+    networks:
+      - bpai_shared_net
+
+
+  # ======================
+  # Celery Beat (CPU ONLY)
+  # ======================
+  celery-beat:
+    build:
+      context: ../FastApi
+      dockerfile: ../docker/DockerFile.backend
+    container_name: celery-beat
+    restart: unless-stopped
+    command: >
+      celery -A app.celery beat
+      --loglevel=info
+      --schedule=/tmp/celerybeat-schedule
+    env_file:
+      - ./.env
+    depends_on:
+      - redis
+      - postgres
+      - connector
+    networks:
+      - bpai_shared_net
+
+
+  # ======================
+  # PostgreSQL
+  # ======================
+  postgres:
+    build:
+      context: .
+      dockerfile: postgres.Dockerfile
+    container_name: postgres-local
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: bpai
+      POSTGRES_PASSWORD: bpai
+      POSTGRES_DB: bpai
+    command:
+      - "postgres"
+      - "-c"
+      - "max_connections=200"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - bpai_shared_net
+
+
+  # ======================
+  # Redis
+  # ======================
+  redis:
+    image: redis:7
+    container_name: redis-server
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - bpai_shared_net
+
+
+  # ======================
+  # Frontend
+  # ======================
+  frontend:
+    build:
+      context: ../BP_AI/frontend
+      dockerfile: ../docker/DockerFile.frontend
+    container_name: frontend
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    networks:
+      - bpai_shared_net
+
+
+  # ======================
+  # Ollama (GPU)
+  # ======================
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama-gpu
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+
+    environment:
+      OLLAMA_HOST: "0.0.0.0"
+      NVIDIA_VISIBLE_DEVICES: all
+      NVIDIA_DRIVER_CAPABILITIES: compute,utility
+
+    gpus: all
+
+    volumes:
+      - ollama-data:/root/.ollama
+
+    networks:
+      - bpai_shared_net
+
+
+  # ======================
+  # OpenWebUI
+  # ======================
+  openwebui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: openwebui
+    restart: unless-stopped
+    ports:
+      - "3002:8080"
+    networks:
+      - bpai_shared_net
+
+  clickhouse:
+
+# ======================
+# Volumes
+# ======================
+volumes:
+  pgdata:
+  ollama-data:
+
+
+# ======================
+# Network
+# ======================
+networks:
+  bpai_shared_net:
+    external: true
+   
+
